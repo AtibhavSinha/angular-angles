@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Angular JS End to End Application</title>
+<script src="https://code.jquery.com/jquery-3.1.0.slim.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+
+<script>
+
+$(function() {
+    console.log( "ready!");	
+});
+
+var app = angular.module('customersApp', ['ngRoute']);
+
+app.config(['$routeProvider', function ($routeProvider) {
+
+    $routeProvider.when('/', {
+        controller: 'customersController',
+        templateUrl: '/home.html'
+    })
+    .otherwise({ redirectTo: '/' });
+
+}]);
+
+// Factory
+angular.module('customersApp').factory('dataFactory', ['$http', function($http) {
+
+	var urlBase = 'http://localhost:8080/api/customers';
+	var dataFactory = {};
+	
+	dataFactory.getCustomers = function () {
+	    return $http.get(urlBase);
+	};
+	
+	return dataFactory;
+}]);
+
+// Controller
+angular.module('customersApp').controller('customersController', ['$scope', 'dataFactory', 
+    function ($scope, dataFactory) {
+
+	$scope.status;
+	$scope.customers;
+	
+	getCustomers();
+	
+	function getCustomers() {
+	    dataFactory.getCustomers()
+	        .then(function (response) {
+	            $scope.customers = response.data;
+	            debugger;
+	        }, function (error) {
+	            $scope.status = 'Unable to load customer data: ' + error.message;
+	        });
+	}
+	
+}]);
+
+
+</script>
+</head>
+<body>
+Angular JS Angles : End to End
+<div ng-app="customersApp">
+ 
+ 	<h2>Customer Dashboard</h2>
+	<div ng-controller="customersController">
+	Response from Service: <p ng-bind="status"></p>
+	<div ng-repeat="c in customers">
+		<p ng-bind="c.name"></p>
+	</div>
+	</div>
+	
+	
+	<p>Input something in the input box:</p>
+	<p>Name: <input type="text" ng-model="name"></p>
+	<p ng-bind="name"></p>
+	
+
+</div>
+
+</body>
+</html>

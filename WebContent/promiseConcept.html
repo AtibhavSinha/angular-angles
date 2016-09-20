@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Angular JS End to End Application</title>
+<script src="https://code.jquery.com/jquery-3.1.0.slim.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+
+<script>
+
+$(function() {
+    console.log( "ready!");	
+});
+
+var app = angular.module('customersApp', ['ngRoute']);
+
+// Controller
+angular.module('customersApp').controller('customersController', ['$scope' , '$timeout' ,function ($scope, $timeout) {
+		
+		// Way -1
+		
+// 		function add(x, y){
+// 			// If http : async : we dont know when the result will be come back. So we can not use return.
+// 			return x+y;
+// 		}
+// 		$scope.sum = add(2,5);
+		
+		//------------------------------
+		
+		// Way - 2: Using call back : but its called imediately !!
+// 		function add(x, y, callBack){
+// 			callBack(x+y);
+// 		}
+		
+// 		add(2,5, function(result){
+// 			$scope.sum = result;
+// 		});
+		
+		// Way - 3 : With Delay from the back end
+// 		function add(x, y, callBack){
+// 			$timeout(function(){
+// 				callBack(x+y);
+// 			}, 1000);
+// 		}
+// 		var startTime = Date.now();
+// 		add(2,5, function(result){
+// 			$scope.sum = result;
+// 			$scope.elaspedTime =  Date.now() - startTime;
+// 		});
+		
+		// Way - 4 : Chain -> login -> based on user id get roles
+// 		function add(x, y, callBack){
+// 			$timeout(function(){
+// 				callBack(x+y);
+// 			}, 1000);
+// 		}
+// 		var startTime = Date.now();
+// 		add(2, 5, function(result){
+// 			debugger;
+// 			add(result, 10, function(result){
+// 				$scope.sum = result;
+// 				$scope.elaspedTime =  Date.now() - startTime;
+// 			});
+// 		});
+		
+		// Way 5: We would a error call back also !! function add(x, y, callBack, errorCallBack)
+		
+		// Way 6: With promise we dont need any call back :)
+		
+		function add(x, y){
+			// time out returns a promise
+			return $timeout(function(){
+				return x+y;
+			}, 1000);
+		}
+		
+		var startTime = Date.now();
+		
+// 		var promise = add(2,5); // we can get promise of a result when it is ready
+		
+// 		promise.then(function(result){
+// 			$scope.sum = result;
+// 			$scope.elaspedTime =  Date.now() - startTime;
+// 		});
+		
+		// can use directly add(2,5).then
+		
+		// Way 7: Chaining is very easy
+		add(2,5)
+		.then(function(result){
+			return add(result, 3);
+		})
+		.then(function(result){
+			return add(result, 5);
+		})
+		.then(function(result){
+			$scope.sum = result;
+			$scope.elaspedTime =  Date.now() - startTime;
+		});
+		
+		
+}]);
+
+
+</script>
+</head>
+<body>
+Angular JS Angles : End to End
+<div ng-app="customersApp">
+ 
+ 	<h2>Summation : Promise Demo</h2>
+	<div ng-controller="customersController">
+		Sum from Service: <p ng-bind="sum"></p>
+		Elapsed time: <p ng-bind="elaspedTime"></p>
+	</div>
+	
+	
+	<p>Input something in the input box:</p>
+	<p>Name: <input type="text" ng-model="name"></p>
+	<p ng-bind="name"></p>
+	
+</div>
+
+</body>
+</html>

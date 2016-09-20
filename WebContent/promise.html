@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Angular JS End to End Application</title>
+<script src="https://code.jquery.com/jquery-3.1.0.slim.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+
+<script>
+
+$(function() {
+    console.log( "ready!");	
+});
+
+var app = angular.module('customersApp', ['ngRoute']);
+
+// Controller
+angular.module('customersApp').controller('customersController', ['$scope', '$timeout', '$q', function ($scope, $timeout, $q) {
+
+	function add(x, y){
+		var q = $q.defer();
+		// time out returns a promise
+		setTimeout(function(){
+			var result = x + y;
+			if(result>0){
+				q.resolve(result);
+			}
+			else{
+				q.reject('Negative value !!' + result);
+			}
+		}, 1000);
+		return q.promise;
+	}
+	
+	var startTime = Date.now();
+	
+	add(2,5)
+	.then(function(result){
+		return add(result, 30);
+	})
+	.then(function(result){
+		return add(result, 10);
+	})
+	.then(function(result){
+		$scope.sum = result;
+		// can pass a callback function if we want handle specifically !!
+	})
+	.catch(function(failure){
+		$scope.failure = failure;
+	})
+	.finally(function(){
+		// Always want to execute
+		$scope.elaspedTime =  Date.now() - startTime;
+	});
+	
+}]);
+
+
+</script>
+</head>
+<body>
+Angular JS Angles : Promise Example
+<div ng-app="customersApp">
+
+ 	<h2>Summation : Promise Demo</h2>
+	<div ng-controller="customersController">
+		Sum from Service: <p ng-bind="sum"></p>
+		Elapsed time: <p ng-bind="elaspedTime"></p>
+		Failure Happen: <p ng-bind="failure"></p>
+	</div>
+	
+</div>
+
+</body>
+</html>
